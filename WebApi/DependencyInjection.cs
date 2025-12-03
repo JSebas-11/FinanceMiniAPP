@@ -1,0 +1,27 @@
+﻿using WebApi.Cache;
+using WebApi.Data;
+using WebApi.Repositories;
+
+namespace WebApi;
+
+internal static class DependencyInjection {
+    public static IServiceCollection AddMiniFinanceWebApi(this IServiceCollection services, MongoDbSettings mongoDbSettings) {
+        // Injeccion DBDriver
+        services.AddSingleton(_ => new MongoDriver(mongoDbSettings));
+
+        // Cache
+        services.AddMemoryCache();
+        services.AddScoped<ICacheService, CacheService>();
+
+        // Utilities
+
+
+        // Repositories
+        services.AddScoped<ITickerRepository, TickerRepository>();
+
+        // Services
+        
+
+        return services;
+    }
+}
