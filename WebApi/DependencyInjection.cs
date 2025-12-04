@@ -1,6 +1,7 @@
 ﻿using WebApi.Cache;
 using WebApi.Data;
 using WebApi.Repositories;
+using WebApi.Services;
 
 namespace WebApi;
 
@@ -13,14 +14,11 @@ internal static class DependencyInjection {
         services.AddMemoryCache();
         services.AddScoped<ICacheService, CacheService>();
 
-        // Utilities
-
-
         // Repositories
         services.AddScoped<ITickerRepository, TickerRepository>();
 
         // Services
-        
+        services.AddScoped<ITickerService, TickerService>();
 
         return services;
     }

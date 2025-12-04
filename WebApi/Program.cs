@@ -1,5 +1,6 @@
 using WebApi;
 using WebApi.Data;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,5 +23,15 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseHttpsRedirection();
+
+// API ENDPOINTS
+app.MapGet("/tickers/{symbol}", 
+    async (string symbol, ITickerService tickerService) => {
+        var result = await tickerService.GetTickerAsync(symbol);
+
+        if (!result.Success) return Results.NotFound();
+        return Results.Ok(result.Value);
+    }
+);
 
 app.Run();

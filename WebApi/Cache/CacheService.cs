@@ -17,8 +17,7 @@ internal class CacheService : ICacheService {
     //------------------------METHODS------------------------
     public async Task<Ticker?> GetTickerAsync(string symbol) {
         Ticker? ticker;
-        symbol = symbol.ToUpperInvariant();
-
+        
         if (!_cache.TryGetValue(symbol, out ticker)) {
             ticker = await _tickerRepository.GetTickerAsync(symbol);
 
