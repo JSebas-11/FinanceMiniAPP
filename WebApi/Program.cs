@@ -1,4 +1,5 @@
 using WebApi;
+using WebApi.Common;
 using WebApi.Data;
 using WebApi.Services;
 
@@ -29,7 +30,13 @@ app.MapGet("/tickers/{symbol}",
     async (string symbol, ITickerService tickerService) => {
         var result = await tickerService.GetTickerAsync(symbol);
 
-        if (!result.Success) return Results.NotFound();
+        if (!result.Success) {
+            return result.Error switch {
+                InternalApiErrors.NotFound => Results.NotFound(result),
+                _ => Results.InternalServerError(result),
+            };
+        }
+
         return Results.Ok(result.Value);
     }
 );

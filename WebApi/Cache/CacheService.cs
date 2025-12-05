@@ -29,5 +29,12 @@ internal class CacheService : ICacheService {
         return ticker;
     }
 
+    public void SetTickerCache(Ticker ticker) {
+        string symbol = ticker.Symbol;
+        ClearTickerCache(symbol);
+
+        _cache.Set(symbol, ticker);
+    }
+
     public void ClearTickerCache (string symbol) => _cache.Remove(symbol.ToUpperInvariant());
 }

@@ -1,5 +1,6 @@
 ﻿using WebApi.Cache;
 using WebApi.Data;
+using WebApi.External.Clients;
 using WebApi.Repositories;
 using WebApi.Services;
 
@@ -16,6 +17,9 @@ internal static class DependencyInjection {
 
         // Repositories
         services.AddScoped<ITickerRepository, TickerRepository>();
+        
+        // Externals
+        services.AddScoped<IFinanceApiClient, FinanceClient>();
 
         // Services
         services.AddScoped<ITickerService, TickerService>();

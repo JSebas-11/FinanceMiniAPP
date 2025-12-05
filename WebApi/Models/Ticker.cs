@@ -33,6 +33,10 @@ internal class Ticker {
     [BsonElement("exchange_name")]
     [BsonIgnoreIfNull]
     public string? ExchangeName { get; set; }
+    
+    [BsonElement("region")]
+    [BsonIgnoreIfNull]
+    public string? Region { get; set; }
     #endregion
 
     #region DateInfo
@@ -113,15 +117,5 @@ internal class Ticker {
     [BsonIgnoreIfNull]
     [BsonRepresentation(BsonType.Decimal128)]
     public decimal? SharesOutstanding { get; set; }
-
-    [BsonElement("pe_ratio")]
-    [BsonIgnoreIfNull]
-    [BsonRepresentation(BsonType.Decimal128)]
-    public decimal? PeRatio { get; set; }
-
-    [BsonElement("eps")]
-    [BsonIgnoreIfNull]
-    [BsonRepresentation(BsonType.Decimal128)]
-    public decimal? EPS { get; set; }
     #endregion
 }
