@@ -15,37 +15,43 @@ internal static class TickerDtoMapper {
 
         return new TickerDto() {
             Symbol = security.Symbol,
-            ShortName = GetFieldOrNull<string>(security, "ShortName"),
-            LongName = GetFieldOrNull<string>(security, "LongName"),
+            ShortName = GetStringOrNull(security, "ShortName"),
+            LongName = GetStringOrNull(security, "LongName"),
             QuoteType = quoteType,
-            Currency = GetFieldOrNull<string>(security, "Currency"),
-            ExchangeName = GetFieldOrNull<string>(security, "FullExchangeName"),
-            Region = GetFieldOrNull<string>(security, "Region"),
+            Currency = GetStringOrNull(security, "Currency"),
+            ExchangeName = GetStringOrNull(security, "FullExchangeName"),
+            Region = GetStringOrNull(security, "Region"),
 
-            MarketPrice = (decimal?)GetFieldOrNull<double>(security, "RegularMarketPrice"),
-            RegularMarketOpen = (decimal?)GetFieldOrNull<double>(security, "RegularMarketOpen"),
-            RegularMarketClose = (decimal?)GetFieldOrNull<double>(security, "RegularMarketPreviousClose"),
-            RegularMarketVolume = GetFieldOrNull<long>(security, "RegularMarketVolume"),
-            MarketCap = GetFieldOrNull<long>(security, "MarketCap"),
+            MarketPrice = GetDecimalOrNull(security, "RegularMarketPrice"),
+            RegularMarketOpen = GetDecimalOrNull(security, "RegularMarketOpen"),
+            RegularMarketClose = GetDecimalOrNull(security, "RegularMarketPreviousClose"),
+            RegularMarketVolume = GetDecimalOrNull(security, "RegularMarketVolume"),
+            MarketCap = GetDecimalOrNull(security, "MarketCap"),
             MarketState = marketState,
 
-            FiftyTwoWeekHigh = (decimal?)GetFieldOrNull<double>(security, "FiftyTwoWeekHigh"),
-            FiftyTwoWeekLow = (decimal?)GetFieldOrNull<double>(security, "FiftyTwoWeekLow"),
+            FiftyTwoWeekHigh = GetDecimalOrNull(security, "FiftyTwoWeekHigh"),
+            FiftyTwoWeekLow = GetDecimalOrNull(security, "FiftyTwoWeekLow"),
 
-            EpsTtm = (decimal?)GetFieldOrNull<double>(security, "EpsTrailingTwelveMonths"),
-            EpsForward = (decimal?)GetFieldOrNull<double>(security, "EpsForward"),
-            ForwardPE = (decimal?)GetFieldOrNull<double>(security, "ForwardPE"),
-            Price2Book = (decimal?)GetFieldOrNull<double>(security, "PriceToBook"),
-            BookValue = (decimal?)GetFieldOrNull<double>(security, "BookValue"),
-            SharesOutstanding = GetFieldOrNull<long>(security, "SharesOutstanding"),
+            EpsTtm = GetDecimalOrNull(security, "EpsTrailingTwelveMonths"),
+            EpsForward = GetDecimalOrNull(security, "EpsForward"),
+            ForwardPE = GetDecimalOrNull(security, "ForwardPE"),
+            Price2Book = GetDecimalOrNull(security, "PriceToBook"),
+            BookValue = GetDecimalOrNull(security, "BookValue"),
+            SharesOutstanding = (long?)GetFieldOrNull(security, "SharesOutstanding"),
         };
     }
 
     //------------------------innerMeths------------------------
-    private static T? GetFieldOrNull<T>(Security sec, string key) {
-        if (sec.Fields.TryGetValue(key, out var value) && value is T typed)
-            return typed;
+    private static object? GetFieldOrNull(Security sec, string key) {
+        sec.Fields.TryGetValue(key, out var value);
+        return value;
+    }
+    private static string? GetStringOrNull(Security sec, string key) => GetFieldOrNull(sec, key)?.ToString();
+    private static decimal? GetDecimalOrNull(Security sec, string key) {
+        var rawObject = GetFieldOrNull(sec, key);
+        if (rawObject is null) return null;
 
-        return default;
+        try { return Convert.ToDecimal(rawObject); }
+        catch (Exception) { return null; }
     }
 }
