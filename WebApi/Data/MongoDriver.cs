@@ -14,5 +14,11 @@ internal class MongoDriver {
         _database = client.GetDatabase(mongoSettings.DatabaseName);
 
         Tickers = _database.GetCollection<Ticker>(mongoSettings.TickersCollectionName);
+
+        //Crear Index en campo Symbol
+        var indexKeys = Builders<Ticker>.IndexKeys.Ascending(t => t.Symbol);
+        var indexOptions = new CreateIndexOptions { Unique = true, Name="index_symbol" };
+        
+        Tickers.Indexes.CreateOne(new CreateIndexModel<Ticker>(indexKeys, indexOptions));
     }
 }

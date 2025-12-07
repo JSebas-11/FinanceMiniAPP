@@ -53,6 +53,30 @@ internal class TickerService : ITickerService {
             return GenericResult<Ticker>.Fail("There has been an error getting ticker", InternalApiErrors.InternalOperationError, ex.Message); 
         }
     }
+    public async Task<Result> CatchUpTickerAsync(string symbol) {
+        symbol = symbol.Trim().ToUpperInvariant();
+
+        //Verificar que si exista en DB
+        if (!await _tickerRepository.ExistsTickerAsync(symbol)) 
+            return Result.Fail($"There is no ticker ({symbol}) in DB to update", InternalApiErrors.NotFound);
+
+        //Obtener ticker de API con nuevos datos o retornar el error en caso de haber ocurrido
+        var result = await _apiClient.GetTickerAsync(symbol);
+        if (!result.Success) return result;
+        if (result.Value is null) return Result.Fail("There has been an error getting ticker from API", InternalApiErrors.ExternalApiError);
+
+        //Creacion del Ticker apartir del DTO
+        Ticker? ticker;
+        try { ticker = CreateTicker(result.Value); }
+        catch (Exception) { return Result.Fail("There has been an error creating ticker", InternalApiErrors.CastingError); }
+
+        //Actualizar ticker en DB
+        var updateResult = await _tickerRepository.UpdateTickerAsync(ticker);
+        if (!updateResult.Success) return updateResult;
+
+        _cacheService.SetTickerCache(ticker);
+        return Result.Ok($"Ticker ({symbol}) updated successfully");
+    }
 
     //------------------------innerMeths------------------------
     private Ticker CreateTicker(TickerDto tickerDto) {

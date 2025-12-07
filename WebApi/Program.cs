@@ -41,4 +41,21 @@ app.MapGet("/tickers/{symbol}",
     }
 );
 
+app.MapPost("/tickers/{symbol}/refresh", 
+    async (string symbol, ITickerService tickerService) => {
+        Result result = await tickerService.CatchUpTickerAsync(symbol);
+
+        if (!result.Success) {
+            return result.Error switch {
+                InternalApiErrors.NotFound => Results.NotFound(result),
+                _ => Results.InternalServerError(result),
+            };
+        }
+
+        return Results.Ok(result);
+    }
+);
+
+
+
 app.Run();

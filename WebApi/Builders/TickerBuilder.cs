@@ -6,7 +6,7 @@ namespace WebApi.Builders;
 internal class TickerBuilder {
     //-------------------------INITIALIZATION-------------------------
     private readonly Ticker _ticker;
-    public TickerBuilder() => _ticker = new Ticker() { CreatedAt = DateTime.Now, LastUpdated = DateTime.Now };
+    public TickerBuilder() => _ticker = new Ticker() { LastUpdated = DateTime.Now };
 
     //-------------------------METHODS-------------------------
     public Ticker Build() {

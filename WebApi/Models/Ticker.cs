@@ -41,7 +41,6 @@ internal class Ticker {
 
     #region DateInfo
     public DateTime LastUpdated { get; set; }
-    public DateTime CreatedAt { get; set; }
     #endregion
 
     #region FinanceInfo
