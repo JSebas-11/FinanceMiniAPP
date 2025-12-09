@@ -13,11 +13,16 @@ internal class TickerService : ITickerService {
     private readonly ITickerRepository _tickerRepository;
     private readonly ICacheService _cacheService;
     private readonly IFinanceApiClient _apiClient;
+    private readonly IArtificialIntelligenceClient _aiClient;
 
-    public TickerService(ITickerRepository tickerRepository, ICacheService cacheService, IFinanceApiClient apiClient) {
+    public TickerService(
+        ITickerRepository tickerRepository, ICacheService cacheService, 
+        IFinanceApiClient apiClient, IArtificialIntelligenceClient aiClient
+    ) {
         _tickerRepository = tickerRepository;
         _cacheService = cacheService;
         _apiClient = apiClient;
+        _aiClient = aiClient;
     }
 
     //------------------------METHODS------------------------
@@ -33,13 +38,13 @@ internal class TickerService : ITickerService {
             //En este caso no se encuentra en cache, asi que lo pedimos a la API
             var clientResult = await _apiClient.GetTickerAsync(symbol);
             if (!clientResult.Success) 
-                return GenericResult<Ticker>.CopyWithNewValue(clientResult, default(Ticker)); ;
+                return GenericResult<Ticker>.CopyWithNewValue(clientResult, default(Ticker));
 
             if (clientResult.Value is null) 
                 return GenericResult<Ticker>.Fail("Ticker could not be got from API", InternalApiErrors.InternalOperationError);
 
             //Construir el objeto ticker apartir del DTO, si este no es nulo
-            ticker = CreateTicker(clientResult.Value);
+            ticker = await CreateTickerAsync(clientResult.Value);
 
             //Guardar en cache y en DB
             var dbInsertion = await _tickerRepository.InsertTickerAsync(ticker);
@@ -67,7 +72,7 @@ internal class TickerService : ITickerService {
 
         //Creacion del Ticker apartir del DTO
         Ticker? ticker;
-        try { ticker = CreateTicker(result.Value); }
+        try { ticker = await CreateTickerAsync(result.Value); }
         catch (Exception) { return Result.Fail("There has been an error creating ticker", InternalApiErrors.CastingError); }
 
         //Actualizar ticker en DB
@@ -79,15 +84,20 @@ internal class TickerService : ITickerService {
     }
 
     //------------------------innerMeths------------------------
-    private Ticker CreateTicker(TickerDto tickerDto) {
-        return new TickerBuilder()
+    private async Task<Ticker> CreateTickerAsync(TickerDto tickerDto) {
+        var builder = new TickerBuilder()
             .WithBasicInfo(tickerDto.Symbol, tickerDto.ShortName, tickerDto.LongName, tickerDto.QuoteType)
             .WithLogisticInfo(tickerDto.Currency, tickerDto.ExchangeName, tickerDto.Region)
             .With52WeeksInfo(tickerDto.FiftyTwoWeekHigh, tickerDto.FiftyTwoWeekLow)
             .WithMarketInfo(tickerDto.MarketPrice, tickerDto.RegularMarketOpen, tickerDto.RegularMarketClose, 
                             tickerDto.RegularMarketVolume, tickerDto.MarketCap, tickerDto.MarketState)
             .WithFundamentals(tickerDto.EpsTtm, tickerDto.EpsForward, tickerDto.ForwardPE, tickerDto.Price2Book, 
-                            tickerDto.BookValue, tickerDto.SharesOutstanding)
-            .Build();
+                            tickerDto.BookValue, tickerDto.SharesOutstanding);
+        
+        //Generacion de resumen con IA y asignacion mediante el builder
+        var summResult = await _aiClient.GenerateSummarizeAsync(tickerDto);
+        string? summarize = summResult.Success ? summResult.Value : null;
+        
+        return builder.WithIaAnalysis(summarize).Build();
     }
 }

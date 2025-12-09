@@ -12,7 +12,10 @@ builder.Services.AddSwaggerGen();
 var settings = builder.Configuration.GetSection("MongoSettings").Get<MongoDbSettings>() 
     ?? throw new InvalidOperationException("DB Settings could not be found");
 
-builder.Services.AddMiniFinanceWebApi(settings);
+string apiKey = builder.Configuration.GetValue<string>("GeminiApiKey")
+    ?? throw new InvalidOperationException("Gemini API Key not configured");
+
+builder.Services.AddMiniFinanceWebApi(settings, apiKey);
 
 
 var app = builder.Build();

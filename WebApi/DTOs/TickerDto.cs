@@ -27,4 +27,6 @@ internal class TickerDto {
     public decimal? Price2Book { get; set; }
     public decimal? BookValue { get; set; }
     public long? SharesOutstanding { get; set; }
+
+    public string? Summarize { get; set; }
 }

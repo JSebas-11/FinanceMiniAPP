@@ -67,5 +67,11 @@ internal class TickerBuilder {
 
         return this;
     }
+
+    public TickerBuilder WithIaAnalysis(string? summarize) {
+        _ticker.IASummarize = summarize;
+
+        return this;
+    }
     #endregion
 }

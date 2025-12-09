@@ -117,4 +117,10 @@ internal class Ticker {
     [BsonRepresentation(BsonType.Decimal128)]
     public decimal? SharesOutstanding { get; set; }
     #endregion
+
+    #region IAAnalysis
+    [BsonElement("summarize")]
+    [BsonIgnoreIfNull]
+    public string? IASummarize { get; set; }
+    #endregion
 }
