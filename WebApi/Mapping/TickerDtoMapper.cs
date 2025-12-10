@@ -1,11 +1,33 @@
-﻿using WebApi.Common;
+﻿using WebApi.Builders;
+using WebApi.Common;
 using WebApi.DTOs;
+using WebApi.External.Clients;
+using WebApi.Models;
 using YahooFinanceApi;
 
 namespace WebApi.Mapping;
 
 internal static class TickerDtoMapper {
     //------------------------MAPPING METHODS------------------------
+    // FROM DTO object
+    public async static Task<Ticker> ToModelAsync(TickerDto dto, IArtificialIntelligenceClient aiClient) {
+        var builder = new TickerBuilder()
+            .WithBasicInfo(dto.Symbol, dto.ShortName, dto.LongName, dto.QuoteType)
+            .WithLogisticInfo(dto.Currency, dto.ExchangeName, dto.Region)
+            .With52WeeksInfo(dto.FiftyTwoWeekHigh, dto.FiftyTwoWeekLow)
+            .WithMarketInfo(dto.MarketPrice, dto.RegularMarketOpen, dto.RegularMarketClose, 
+                            dto.RegularMarketVolume, dto.MarketCap, dto.MarketState)
+            .WithFundamentals(dto.EpsTtm, dto.EpsForward, dto.ForwardPE, dto.Price2Book, 
+                            dto.BookValue, dto.SharesOutstanding);
+        
+        //Generacion de resumen con IA y asignacion mediante el builder
+        var summResult = await aiClient.GenerateSummarizeAsync(dto);
+        string? summarize = summResult.Success ? summResult.Value : null;
+        
+        return builder.WithIaAnalysis(summarize).Build();
+    }
+
+    // FROM FinanceAPI object
     public static TickerDto ToDto(Security security) {
         var parseQuote = Enum.TryParse<QuoteType>(security.QuoteType, true, out var quoteType);
         if (!parseQuote) quoteType = QuoteType.Unknown;

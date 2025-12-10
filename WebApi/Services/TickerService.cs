@@ -1,8 +1,7 @@
-﻿using WebApi.Builders;
-using WebApi.Cache;
+﻿using WebApi.Cache;
 using WebApi.Common;
-using WebApi.DTOs;
 using WebApi.External.Clients;
+using WebApi.Mapping;
 using WebApi.Models;
 using WebApi.Repositories;
 
@@ -44,7 +43,7 @@ internal class TickerService : ITickerService {
                 return GenericResult<Ticker>.Fail("Ticker could not be got from API", InternalApiErrors.InternalOperationError);
 
             //Construir el objeto ticker apartir del DTO, si este no es nulo
-            ticker = await CreateTickerAsync(clientResult.Value);
+            ticker = await TickerDtoMapper.ToModelAsync(clientResult.Value, _aiClient);
 
             //Guardar en cache y en DB
             var dbInsertion = await _tickerRepository.InsertTickerAsync(ticker);
@@ -72,7 +71,7 @@ internal class TickerService : ITickerService {
 
         //Creacion del Ticker apartir del DTO
         Ticker? ticker;
-        try { ticker = await CreateTickerAsync(result.Value); }
+        try { ticker = await TickerDtoMapper.ToModelAsync(result.Value, _aiClient); }
         catch (Exception) { return Result.Fail("There has been an error creating ticker", InternalApiErrors.CastingError); }
 
         //Actualizar ticker en DB
@@ -81,23 +80,5 @@ internal class TickerService : ITickerService {
 
         _cacheService.SetTickerCache(ticker);
         return Result.Ok($"Ticker ({symbol}) updated successfully");
-    }
-
-    //------------------------innerMeths------------------------
-    private async Task<Ticker> CreateTickerAsync(TickerDto tickerDto) {
-        var builder = new TickerBuilder()
-            .WithBasicInfo(tickerDto.Symbol, tickerDto.ShortName, tickerDto.LongName, tickerDto.QuoteType)
-            .WithLogisticInfo(tickerDto.Currency, tickerDto.ExchangeName, tickerDto.Region)
-            .With52WeeksInfo(tickerDto.FiftyTwoWeekHigh, tickerDto.FiftyTwoWeekLow)
-            .WithMarketInfo(tickerDto.MarketPrice, tickerDto.RegularMarketOpen, tickerDto.RegularMarketClose, 
-                            tickerDto.RegularMarketVolume, tickerDto.MarketCap, tickerDto.MarketState)
-            .WithFundamentals(tickerDto.EpsTtm, tickerDto.EpsForward, tickerDto.ForwardPE, tickerDto.Price2Book, 
-                            tickerDto.BookValue, tickerDto.SharesOutstanding);
-        
-        //Generacion de resumen con IA y asignacion mediante el builder
-        var summResult = await _aiClient.GenerateSummarizeAsync(tickerDto);
-        string? summarize = summResult.Success ? summResult.Value : null;
-        
-        return builder.WithIaAnalysis(summarize).Build();
     }
 }
