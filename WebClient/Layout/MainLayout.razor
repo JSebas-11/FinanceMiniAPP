@@ -1,0 +1,22 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider IsDarkMode=true/>
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudStack Class="transparent pa-2">
+        <MudStack Row=true AlignItems="AlignItems.Center">
+            <MudIcon Icon="@Icons.Material.Outlined.PriceChange" Size="Size.Large" Color="Color.Primary"/>
+
+            <MudText Typo="Typo.h4" Color="Color.Primary">Quick Stocks</MudText>
+        </MudStack>
+
+        <MudText Typo="Typo.body1" Color="Color.Surface">Pick up some usefull information about your favorite stocks</MudText>
+    </MudStack>
+
+    <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="pa-8">
+        @Body
+    </MudContainer>
+</MudLayout>

@@ -1,0 +1,49 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<!-- MAIN LAYOUT -->
+<MudStack AlignItems="AlignItems.Center">
+
+    <!-- MAIN LAYOUT - INPUTS -->
+    <MudText Typo="Typo.h5" Color="Color.Primary">Stock input:</MudText>
+    <MudText Typo="Typo.body1" Color="Color.Surface">Only stock's symbol are allowed</MudText>
+    <MudTextField Label="Symbol" Clearable=true @bind-value="_ticker" 
+        Variant="Variant.Filled" MaxLength=10  InputType="InputType.Text" 
+        HelperText="Type stock's symbol" Adornment=Adornment.End
+        AdornmentIcon="@Icons.Material.Filled.Badge" AdornmentColor="Color.Primary" />
+
+    <!-- MAIN LAYOUT - BUTTONS -->
+    <MudStack Row=true>
+        <MudButton @onclick="GetAssetAsync" Disabled="@_isLoading" Variant="Variant.Filled" 
+            Color="Color.Primary" FullWidth="true">
+            Get Asset
+        </MudButton>
+
+        <MudButton @onclick="UpdateAssetAsync" Disabled="@_isLoading" Variant="Variant.Filled" 
+            Color="Color.Primary" FullWidth="true">
+            Update Asset
+        </MudButton>
+    </MudStack>
+
+    <!-- MAIN LAYOUT - STOCKVIEW -->
+    <MudPaper Elevation="10" Width="90%" Height="90%" Class="border pa-5 mt-8" Square=true>
+        @if (_isLoading){
+            <MudStack AlignItems="AlignItems.Center">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate=true/>
+                <MudText Typo="Typo.h4" Color="Color.Primary">Cooking stuff...</MudText>
+            </MudStack>
+
+            @if (_stockLoaded){
+                <StockView />
+            }
+        }
+        else { 
+            <MudStack AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Large" /> 
+                <MudText Typo="Typo.h4">@_infoMsg</MudText> 
+            </MudStack>
+        }
+    </MudPaper>
+
+</MudStack>
