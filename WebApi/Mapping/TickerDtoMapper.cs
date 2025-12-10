@@ -1,5 +1,5 @@
-﻿using WebApi.Builders;
-using WebApi.Common;
+﻿using Shares.Enums;
+using WebApi.Builders;
 using WebApi.DTOs;
 using WebApi.External.Clients;
 using WebApi.Models;

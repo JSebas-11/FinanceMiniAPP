@@ -1,4 +1,4 @@
-﻿using WebApi.Common;
+﻿using Shares.Enums;
 using WebApi.Models;
 
 namespace WebApi.Builders;

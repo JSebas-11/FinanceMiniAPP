@@ -1,4 +1,4 @@
-﻿using WebApi.Common;
+﻿using Shares.Enums;
 
 namespace WebApi.DTOs;
 

@@ -10,4 +10,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
     <PackageReference Include="YahooFinanceApi" Version="2.3.3" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shares\Shares.csproj" />
+  </ItemGroup>
 </Project>

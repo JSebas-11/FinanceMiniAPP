@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using WebApi.Common;
+using Shares.Enums;
 
 namespace WebApi.Models;
 
