@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
-using WebApi.Common;
+using Shares.Enums;
+using Shares.Results;
 using WebApi.Data;
 using WebApi.Models;
 

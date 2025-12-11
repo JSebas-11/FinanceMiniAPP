@@ -1,6 +1,7 @@
-using WebApi.Common;
-using WebApi.DTOs;
-using WebApi.DTOs.AiClientDTOs;
+using Shares.DTOs;
+using Shares.Enums;
+using Shares.Results;
+using WebApi.External.DTOs;
 
 namespace WebApi.External.Clients;
 

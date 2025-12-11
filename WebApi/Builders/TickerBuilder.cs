@@ -69,7 +69,7 @@ internal class TickerBuilder {
     }
 
     public TickerBuilder WithIaAnalysis(string? summarize) {
-        _ticker.IASummarize = summarize;
+        _ticker.Summarize = summarize;
 
         return this;
     }

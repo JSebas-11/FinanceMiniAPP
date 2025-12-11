@@ -121,6 +121,6 @@ internal class Ticker {
     #region IAAnalysis
     [BsonElement("summarize")]
     [BsonIgnoreIfNull]
-    public string? IASummarize { get; set; }
+    public string? Summarize { get; set; }
     #endregion
 }

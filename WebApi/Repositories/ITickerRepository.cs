@@ -1,4 +1,4 @@
-﻿using WebApi.Common;
+﻿using Shares.Results;
 using WebApi.Models;
 
 namespace WebApi.Repositories;
