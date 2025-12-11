@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace WebApi.DTOs.AiClientDTOs;
+namespace WebApi.External.DTOs;
 
 #region Common
 // CONTENT

@@ -1,6 +1,6 @@
-﻿using Shares.Enums;
+﻿using Shares.DTOs;
+using Shares.Enums;
 using WebApi.Builders;
-using WebApi.DTOs;
 using WebApi.External.Clients;
 using WebApi.Models;
 using YahooFinanceApi;

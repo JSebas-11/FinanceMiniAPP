@@ -1,5 +1,5 @@
-using WebApi.Common;
-using WebApi.DTOs;
+using Shares.DTOs;
+using Shares.Results;
 
 namespace WebApi.External.Clients;
 
