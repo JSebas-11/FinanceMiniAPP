@@ -1,7 +1,9 @@
+using Shares.DTOs;
 using Shares.Enums;
 using Shares.Results;
 using WebApi;
 using WebApi.Data;
+using WebApi.Mapping;
 using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,20 @@ string apiKey = builder.Configuration.GetValue<string>("GeminiApiKey")
 
 builder.Services.AddMiniFinanceWebApi(settings, apiKey);
 
+// AddCORS
+string[] allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
+    ?? throw new InvalidOperationException("CORS is not configured (AllowedOrigins) could not be found");
+
+string clientPolicy = "Client Policy";
+
+builder.Services.AddCors(opts => {
+    opts.AddPolicy(clientPolicy, policy => {
+        policy
+            .WithOrigins(allowedOrigins)
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -28,6 +44,9 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(clientPolicy);
+
 
 // API ENDPOINTS
 app.MapGet("/tickers/{symbol}", 
@@ -41,9 +60,13 @@ app.MapGet("/tickers/{symbol}",
             };
         }
 
-        return Results.Ok(result.Value);
+        return Results.Ok(TickerDtoMapper.ToDto(result.Value!));
     }
-);
+)   .WithName("GetTicker")
+    .WithTags("Tickers")
+    .Produces<TickerDto>(StatusCodes.Status200OK)
+    .Produces<Result>(StatusCodes.Status404NotFound)
+    .Produces<Result>(StatusCodes.Status500InternalServerError);
 
 app.MapPost("/tickers/{symbol}/refresh", 
     async (string symbol, ITickerService tickerService) => {
@@ -58,8 +81,21 @@ app.MapPost("/tickers/{symbol}/refresh",
 
         return Results.Ok(result);
     }
-);
+)   .WithName("RefreshTicker")
+    .WithTags("Tickers")
+    .Produces<Result>(StatusCodes.Status200OK)
+    .Produces<Result>(StatusCodes.Status404NotFound)
+    .Produces<Result>(StatusCodes.Status500InternalServerError);
 
+// CORSTEST ENDPOINT
+app.MapPost("/cors-test", () => {
+    return Results.Ok(new {
+       Message = "CORS working propertly",
+       Timestampo = DateTime.UtcNow,
+       AllowedOrigins = allowedOrigins 
+    });
+})  .WithName("TestCors")
+    .Produces(StatusCodes.Status200OK);
 
 
 app.Run();

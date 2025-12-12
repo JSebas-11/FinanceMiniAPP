@@ -1,0 +1,24 @@
+{
+  "runtime": "Net90",
+  "documentGenerator": {
+    "fromDocument": {
+      "url": null,
+      "json": "Services/API/swagger.json"
+    }
+  },
+  "codeGenerators": {
+    "openApiToCSharpClient": {
+      "className": "ApiService",
+      "namespace": "WebClient.Services.API.ApiService",
+      "generateClientInterfaces": true,
+      "useBaseUrl": false,
+      "generateBaseUrlProperty": false,
+      "injectHttpClient": true,
+      "disposeHttpClient": false,
+      "generateOptionalParameters": true,
+      "generateDtoTypes": false,
+      "useDtoClassPrefix": false,
+      "output": "ApiService.cs"
+    }
+  }
+}

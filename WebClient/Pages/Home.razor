@@ -8,7 +8,7 @@
     <!-- MAIN LAYOUT - INPUTS -->
     <MudText Typo="Typo.h5" Color="Color.Primary">Stock input:</MudText>
     <MudText Typo="Typo.body1" Color="Color.Surface">Only stock's symbol are allowed</MudText>
-    <MudTextField Label="Symbol" Clearable=true @bind-value="_ticker" 
+    <MudTextField Label="Symbol" Clearable=true @bind-value="_symbol" 
         Variant="Variant.Filled" MaxLength=10  InputType="InputType.Text" 
         HelperText="Type stock's symbol" Adornment=Adornment.End
         AdornmentIcon="@Icons.Material.Filled.Badge" AdornmentColor="Color.Primary" />
@@ -28,15 +28,14 @@
 
     <!-- MAIN LAYOUT - STOCKVIEW -->
     <MudPaper Elevation="10" Width="90%" Height="90%" Class="border pa-5 mt-8" Square=true>
-        @if (_isLoading){
+        @if (_stockLoaded){ 
+            <StockView Ticker="@_ticker"/> 
+        }
+        else if (_isLoading){
             <MudStack AlignItems="AlignItems.Center">
                 <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate=true/>
                 <MudText Typo="Typo.h4" Color="Color.Primary">Cooking stuff...</MudText>
             </MudStack>
-
-            @if (_stockLoaded){
-                <StockView />
-            }
         }
         else { 
             <MudStack AlignItems="AlignItems.Center">

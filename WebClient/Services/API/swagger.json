@@ -1,0 +1,300 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "WebApi",
+    "version": "1.0"
+  },
+  "paths": {
+    "/tickers/{symbol}": {
+      "get": {
+        "tags": [
+          "Tickers"
+        ],
+        "operationId": "GetTicker",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TickerDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tickers/{symbol}/refresh": {
+      "post": {
+        "tags": [
+          "Tickers"
+        ],
+        "operationId": "RefreshTicker",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cors-test": {
+      "post": {
+        "tags": [
+          "WebApi"
+        ],
+        "operationId": "TestCors",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "InternalApiErrors": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "MarketState": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "QuoteType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Result": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/InternalApiErrors"
+          },
+          "exceptionMsg": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TickerDto": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "shortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "longName": {
+            "type": "string",
+            "nullable": true
+          },
+          "quoteType": {
+            "$ref": "#/components/schemas/QuoteType"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "exchangeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "marketPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "regularMarketOpen": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "regularMarketClose": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "regularMarketVolume": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "marketCap": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "marketState": {
+            "$ref": "#/components/schemas/MarketState"
+          },
+          "fiftyTwoWeekHigh": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "fiftyTwoWeekLow": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "epsTtm": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "epsForward": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "forwardPE": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "price2Book": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bookValue": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "sharesOutstanding": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "summarize": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Tickers"
+    },
+    {
+      "name": "WebApi"
+    }
+  ]
+}

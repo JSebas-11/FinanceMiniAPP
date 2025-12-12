@@ -27,6 +27,34 @@ internal static class TickerDtoMapper {
         return builder.WithIaAnalysis(summarize).Build();
     }
 
+    // FROM Model object
+    public static TickerDto ToDto(Ticker ticker)
+        => new (){
+            Symbol = ticker.Symbol,
+            ShortName = ticker.ShortName,
+            LongName = ticker.LongName,
+            QuoteType = ticker.QuoteType,
+            Currency = ticker.Currency,
+            ExchangeName = ticker.ExchangeName,
+            Region = ticker.Region,
+            LastUpdated = ticker.LastUpdated,
+            MarketPrice = ticker.MarketPrice,
+            RegularMarketOpen = ticker.RegularMarketOpen,
+            RegularMarketClose = ticker.RegularMarketClose,
+            RegularMarketVolume = ticker.RegularMarketVolume,
+            MarketCap = ticker.MarketCap,
+            MarketState = ticker.MarketState,
+            FiftyTwoWeekHigh = ticker.FiftyTwoWeekHigh,
+            FiftyTwoWeekLow = ticker.FiftyTwoWeekLow,
+            EpsTtm = ticker.EpsTtm,
+            EpsForward = ticker.EpsForward,
+            ForwardPE = ticker.ForwardPE,
+            Price2Book = ticker.Price2Book,
+            BookValue = ticker.BookValue,
+            SharesOutstanding = (long?)ticker.SharesOutstanding,
+            Summarize = ticker.Summarize
+        };
+
     // FROM FinanceAPI object
     public static TickerDto ToDto(Security security) {
         var parseQuote = Enum.TryParse<QuoteType>(security.QuoteType, true, out var quoteType);

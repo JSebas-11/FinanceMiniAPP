@@ -20,7 +20,10 @@ builder.Services.AddMudServices(config => {
     config.SnackbarConfiguration.HideTransitionDuration = 300;
 });
 
-// WebClient injection
-builder.Services.AddMiniFinanceClient();
+// WebClient Services injection
+string apiUrl = builder.Configuration.GetValue<string>("ApiURL")
+    ?? throw new InvalidOperationException("API URL is not configured");
+
+builder.Services.AddMiniFinanceClient(apiUrl);
 
 await builder.Build().RunAsync();

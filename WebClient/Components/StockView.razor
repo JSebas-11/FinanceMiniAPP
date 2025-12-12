@@ -1,7 +1,7 @@
-@namespace WebClient.Components
-
-<MudText>Hi @_test</MudText>
-
-@code {
-    private string _test = "sebas";
+@if (Ticker is null){
+    <MudText>TickerNull</MudText>
+}
+else {
+    
+    <MudText>@Ticker.Symbol</MudText>
 }
