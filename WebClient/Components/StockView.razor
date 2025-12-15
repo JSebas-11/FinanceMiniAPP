@@ -2,6 +2,101 @@
     <MudText>TickerNull</MudText>
 }
 else {
-    
-    <MudText>@Ticker.Symbol</MudText>
+    <!-- MAIN LAYOUT -->
+    <MudStack AlignItems="AlignItems.Center">
+        <!-- MAIN LAYOUT - GENERAL INFO -->
+        <MudStack Row=true Spacing="20">
+            <MudStack>
+                <!-- MAIN LAYOUT - MARKET STATE -->
+                <MudStack Row=true AlignItems="AlignItems.Center" Class="mb-5">
+                    <MudIcon Icon="@Icons.Material.Outlined.Store" Size="Size.Large" Color="@_marketStateColor"/>
+                
+                    <MudText Typo="Typo.h6" Color="@_marketStateColor">Market State: @Ticker.MarketState</MudText>
+                </MudStack>
+
+                <!-- MAIN LAYOUT - BASIC INFO -->
+                <MudStack Spacing="-10">
+                    <MudText Typo="Typo.h4" Class="font-title">@Ticker.ShortName (@Ticker.Symbol)</MudText>
+                    <MudText Typo="Typo.h6" Class="font-sbtitle">@Ticker.LongName</MudText>
+                </MudStack>
+                
+                <MudText Typo="Typo.h4" Class="font-title" Style="font-weight: bolder;">$ @Ticker.MarketPrice</MudText>
+
+                <MudStack Spacing="-10">
+                    <MudText Typo="Typo.body2">Region / Exchange Name / Currency</MudText>
+                    <MudText Typo="Typo.h6" Class="font-sbtitle">@Ticker.Region / @Ticker.ExchangeName / @Ticker.Currency</MudText>
+                </MudStack>
+
+                <MudSpacer/>
+                <!-- MAIN LAYOUT - DATE -->
+                <MudStack Row=true AlignItems="AlignItems.Center">
+                    <MudIcon Icon="@_updatedIcon" Size="Size.Large"/>
+                    <MudText Typo="Typo.body2">Last Updated:</MudText>
+                    <MudText Typo="Typo.h6" Class="font-sbtitle">@Ticker.LastUpdated</MudText>
+                </MudStack>
+
+            </MudStack>
+
+            <MudStack>
+
+                <!-- MAIN LAYOUT - QUOTE TYPE CARD -->
+                <MudCard>
+                    <MudCardMedia Image="@_quoteTypeImgSrc" Class="img-container" Style="object-fit: fill;"/>
+                    <MudCardContent Class="card-container">
+                        <MudText Typo="Typo.body2">Quote Type</MudText>
+                        <MudText Typo="Typo.h5" Class="font-sbtitle">@Ticker.QuoteType</MudText>
+                    </MudCardContent>
+                </MudCard>
+
+            </MudStack>
+        </MudStack>
+
+        <!-- MAIN LAYOUT - EXPANDERS -->
+        <MudExpansionPanels MultiExpansion=true Elevation="10" Class="my-10">
+            <!-- MAIN LAYOUT - FINANCIAL -->
+            <MudExpansionPanel>
+                <TitleContent>
+                    <MudStack Row=true>
+                        <MudIcon Icon="@Icons.Material.Outlined.Analytics" Size="Size.Medium" Color="Color.Primary"/>
+                        <MudText Color="Color.Primary">Additional Financial Info</MudText>
+                    </MudStack>
+                </TitleContent>
+                
+                <ChildContent>
+                    <MetricsGrid MetricsDict="@_financialDict"/>
+                </ChildContent>
+            </MudExpansionPanel>
+
+            <!-- MAIN LAYOUT - FUNDAMENTALS -->
+            <MudExpansionPanel>
+                <TitleContent>
+                    <MudStack Row=true>
+                        <MudIcon Icon="@Icons.Material.Outlined.LabelImportant" Size="Size.Medium" Color="Color.Primary"/>
+                        <MudText Color="Color.Primary">Fundamentals</MudText>
+                    </MudStack>
+                </TitleContent>
+                
+                <ChildContent>
+                    <MetricsGrid MetricsDict="@_fundamentalsDict"/>
+                </ChildContent>
+            </MudExpansionPanel>
+
+        </MudExpansionPanels>
+
+        <!-- MAIN LAYOUT - SUMMARIZE -->
+        <MudDivider Style="border-color: #fff;"/>
+        <MudText Color="Color.Primary" Typo="Typo.h4">IA Analysis</MudText>
+        <MudChat Elevation="10" Class="main-color pa-5">
+            <MudAvatar >
+                <MudImage Src="imgs/ia_icon.jpeg"/>
+            </MudAvatar>
+            
+            <MudChatHeader>FinancAIl</MudChatHeader>
+
+            <MudChatBubble Color="Color.Primary" Style="background-color: #888;">
+                @Ticker.Summarize
+            </MudChatBubble>
+        </MudChat>
+
+    </MudStack>
 }
