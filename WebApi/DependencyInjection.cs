@@ -7,12 +7,21 @@ using WebApi.Services;
 namespace WebApi;
 
 internal static class DependencyInjection {
-    public static IServiceCollection AddMiniFinanceWebApi(this IServiceCollection services, MongoDbSettings mongoDbSettings, string apiKey) {
+    public static IServiceCollection AddMiniFinanceWebApi(
+            this IServiceCollection services, 
+            MongoDbSettings mongoDbSettings, CacheSettings cacheSettings, 
+            string apiKey
+        ) {
         // Injeccion DBDriver
         services.AddSingleton(_ => new MongoDriver(mongoDbSettings));
 
         // Cache
-        services.AddMemoryCache();
+        // services.AddMemoryCache();
+        services.AddSingleton(cacheSettings);
+        services.AddStackExchangeRedisCache(opts => {
+            opts.Configuration = cacheSettings.Configuration;
+            opts.InstanceName = cacheSettings.InstanceName;
+        });
         services.AddScoped<ICacheService, CacheService>();
 
         // Repositories

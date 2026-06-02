@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Caching.Distributed;
 using WebApi.Models;
 using WebApi.Repositories;
 
@@ -6,34 +7,39 @@ namespace WebApi.Cache;
 
 internal class CacheService : ICacheService {
     //------------------------INITIALIZATION------------------------
-    private readonly IMemoryCache _cache;
+    private readonly IDistributedCache _cache;
+    private readonly DistributedCacheEntryOptions _opts;
     private readonly ITickerRepository _tickerRepository;
 
-    public CacheService(IMemoryCache memoryCache, ITickerRepository tickerRepository) {
-        _cache = memoryCache;
+    public CacheService(IDistributedCache distCache, CacheSettings settings, ITickerRepository tickerRepository) {
+        _cache = distCache;
+        _opts = new DistributedCacheEntryOptions() {
+            AbsoluteExpirationRelativeToNow = settings.Expiration
+        };
         _tickerRepository = tickerRepository;
     }
 
     //------------------------METHODS------------------------
     public async Task<Ticker?> GetTickerAsync(string symbol) {
-        Ticker? ticker;
+        var json = _cache.GetString(symbol);
         
-        if (!_cache.TryGetValue(symbol, out ticker)) {
-            ticker = await _tickerRepository.GetTickerAsync(symbol);
-
+        if (string.IsNullOrWhiteSpace(json)) {
+            var ticker = await _tickerRepository.GetTickerAsync(symbol);
             if (ticker is null) return null; //No cachear en caso de no tener el ticker en la DB
 
-            _cache.Set(symbol, ticker);
+            SetTickerCache(ticker);
+            return ticker;
         }
-
-        return ticker;
+        
+        return JsonSerializer.Deserialize<Ticker>(json);
     }
 
     public void SetTickerCache(Ticker ticker) {
         string symbol = ticker.Symbol;
         ClearTickerCache(symbol);
 
-        _cache.Set(symbol, ticker);
+        var json = JsonSerializer.Serialize(ticker);
+        _cache.SetString(symbol, json, _opts);
     }
 
     public void ClearTickerCache (string symbol) => _cache.Remove(symbol.ToUpperInvariant());

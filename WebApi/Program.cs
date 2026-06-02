@@ -2,6 +2,7 @@ using Shares.DTOs;
 using Shares.Enums;
 using Shares.Results;
 using WebApi;
+using WebApi.Cache;
 using WebApi.Data;
 using WebApi.Mapping;
 using WebApi.Services;
@@ -12,13 +13,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // AddAPI
-var settings = builder.Configuration.GetSection("MongoSettings").Get<MongoDbSettings>() 
+var mongoSettings = builder.Configuration.GetSection("MongoSettings").Get<MongoDbSettings>() 
     ?? throw new InvalidOperationException("DB Settings could not be found");
+
+var cacheSettings = builder.Configuration.GetSection("CacheSettings").Get<CacheSettings>() 
+    ?? throw new InvalidOperationException("Cache Settings could not be found");
 
 string apiKey = builder.Configuration.GetValue<string>("GeminiApiKey")
     ?? throw new InvalidOperationException("Gemini API Key not configured");
 
-builder.Services.AddMiniFinanceWebApi(settings, apiKey);
+builder.Services.AddMiniFinanceWebApi(mongoSettings, cacheSettings, apiKey);
 
 // AddCORS
 string[] allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
