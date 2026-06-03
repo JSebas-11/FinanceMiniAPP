@@ -1,0 +1,49 @@
+services:
+  client:
+    build: 
+      context: .
+      dockerfile: WebClient/Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - api
+    networks:
+      - api-net
+
+  api:
+    image: stocks-api:latest
+    build:
+      context: .
+      dockerfile: WebApi/Dockerfile
+    environment:
+      - MongoSettings__ConnectionString=mongodb://mongo:27017
+      - CacheSettings__Configuration=redis:6379
+      - GeminiApiKey=${GEMINI_API_KEY}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - api-net
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - api-net
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis-data:/data
+    networks:
+      - api-net
+
+networks:
+  api-net:
+
+volumes:
+  mongo-data:
+  redis-data:
